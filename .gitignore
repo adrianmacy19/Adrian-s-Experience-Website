@@ -1,0 +1,15 @@
+node_modules/
+serve-log.txt
+
+# Dev/screenshot scripts
+screenshot-quotes.mjs
+screenshot-sections.mjs
+temporary screenshots/
+
+# Reference & personal files not meant for the repo
+CLAUDE.md
+Reference Letter from Dave for Interac Work.pdf
+Reference for Website Example.png
+Unclear Text Clip.mp4
+www.awwwards.com_sites_bentoml.png
+website v2.html

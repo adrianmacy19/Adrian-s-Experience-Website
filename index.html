@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adrian Ma — Strategy Consultant &amp; Product Leader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+  <style>
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── DESIGN TOKENS (Spade-inspired) ── */
+    :root {
+      --bg:           #090f05;
+      --bg-1:         #0d1708;
+      --bg-2:         #111f0a;
+      --forest:       #182b10;
+      --forest-2:     #1e3414;
+      --lemon:        #b2eb76;
+      --lemon-dim:    rgba(178,235,118,0.10);
+      --lemon-border: rgba(178,235,118,0.18);
+      --moss:         #3f7308;
+      --sky:          #baebc2;
+      --sage-1:       #f4faed;
+      --sage-2:       #d8e5ca;
+      --sage-3:       #b3c5a0;
+      --sage-4:       #4a5b38;
+      --border:       rgba(178,235,118,0.07);
+      --ease-out:     cubic-bezier(0, 0, .2, 1);
+      --ease-io:      cubic-bezier(.4, 0, .2, 1);
+      --header-h:     4rem;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--sage-1);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── GRAIN TEXTURE ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9999;
+      opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: var(--header-h);
+      padding: 0 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid transparent;
+      transition: background .3s var(--ease-out), border-color .3s var(--ease-out);
+    }
+    nav.scrolled {
+      background: rgba(9,15,5,.90);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border-bottom-color: var(--border);
+    }
+    .nav-logo {
+      font-family: 'Fraunces', serif;
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--lemon); letter-spacing: -.01em;
+    }
+    .nav-links {
+      display: flex; gap: 2rem; list-style: none; align-items: center;
+    }
+    .nav-links a {
+      font-size: .75rem; font-weight: 600;
+      color: var(--sage-3); text-decoration: none;
+      letter-spacing: .09em; text-transform: uppercase;
+      transition: color .2s var(--ease-out);
+    }
+    .nav-links a:hover { color: var(--lemon); }
+    .nav-cta {
+      background: var(--lemon); color: #090f05;
+      padding: .46rem 1.15rem; border-radius: 100px;
+      font-size: .78rem; font-weight: 700; text-decoration: none;
+      transition: opacity .2s var(--ease-out), transform .2s var(--ease-out);
+    }
+    .nav-cta:hover { opacity: .88; transform: translateY(-1px); }
+    .nav-cta:active { transform: translateY(0); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      padding: calc(var(--header-h) + 4rem) 2rem 6rem;
+    }
+    .hero-orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(110px); pointer-events: none;
+    }
+    .hero-orb-1 {
+      width: 650px; height: 650px;
+      background: radial-gradient(circle, rgba(178,235,118,.11) 0%, transparent 70%);
+      top: -120px; left: -80px;
+    }
+    .hero-orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(63,115,8,.14) 0%, transparent 70%);
+      bottom: -60px; right: -60px;
+    }
+    .hero-orb-3 {
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(186,235,194,.07) 0%, transparent 70%);
+      top: 45%; left: 62%;
+    }
+    .hero-content {
+      position: relative; text-align: center;
+      max-width: 1000px; z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      border: 1px solid rgba(125,211,252,.35); background: rgba(125,211,252,.08);
+      color: var(--lemon);
+      padding: .38rem 1rem; border-radius: 100px;
+      font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 2.5rem;
+      animation: fade-in-down .5s var(--ease-out) both, badge-pulse 2.4s ease-in-out 0.5s infinite;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #7dd3fc;
+      box-shadow: 0 0 6px 2px rgba(125,211,252,.7);
+      flex-shrink: 0;
+    }
+    @keyframes badge-pulse {
+      0%, 100% {
+        border-color: rgba(125,211,252,.35);
+        background: rgba(125,211,252,.08);
+        color: var(--lemon);
+        box-shadow: none;
+      }
+      50% {
+        border-color: rgba(125,211,252,.75);
+        background: rgba(125,211,252,.18);
+        color: #fff;
+        box-shadow: 0 0 18px rgba(125,211,252,.25);
+      }
+    }
+    .hero-name {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(4.5rem, 13vw, 10.5rem);
+      font-weight: 900; line-height: .88;
+      letter-spacing: -.04em;
+      margin-bottom: 1.75rem;
+    }
+    .name-clip {
+      display: block; overflow: hidden;
+      padding-bottom: .06em;
+    }
+    .name-text {
+      display: block;
+      transform: translateY(110%);
+      animation: clip-up .9s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    .name-clip:nth-child(1) .name-text { animation-delay: .1s; }
+    .name-clip:nth-child(2) .name-text { animation-delay: .26s; }
+    .name-lemon { color: var(--lemon); }
+    @keyframes clip-up { to { transform: translateY(0); } }
+
+    .hero-roles {
+      font-size: clamp(.9rem, 2vw, 1.1rem);
+      color: var(--sage-3); font-weight: 400;
+      margin-bottom: 1.5rem; min-height: 1.8rem;
+      animation: fade-in-up .6s .2s var(--ease-out) both;
+    }
+    .tw-text { color: var(--sky); font-weight: 500; }
+    .cursor-bar {
+      display: inline-block;
+      width: 2px; height: 1em;
+      background: var(--sky);
+      vertical-align: middle; margin-left: 1px;
+      animation: cursor-blink .7s ease infinite;
+    }
+    @keyframes cursor-blink {
+      0%,45% { opacity:1; }
+      55%,100% { opacity:0; }
+    }
+    .hero-desc {
+      max-width: 570px; margin: 0 auto 2.5rem;
+      color: var(--sage-3); font-size: .98rem; line-height: 1.78; font-weight: 300;
+      animation: fade-in-up .6s .3s var(--ease-out) both;
+    }
+    .hero-actions {
+      display: flex; gap: .875rem; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+      animation: fade-in-up .6s .4s var(--ease-out) both;
+    }
+    .btn-primary {
+      background: var(--lemon); color: #090f05;
+      padding: .8rem 2rem; border-radius: 100px;
+      font-size: .88rem; font-weight: 700; text-decoration: none;
+      transition: opacity .2s var(--ease-out), transform .2s var(--ease-out), box-shadow .2s var(--ease-out);
+    }
+    .btn-primary:hover {
+      opacity: .9; transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(178,235,118,.22);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-ghost {
+      background: transparent; border: 1px solid var(--lemon-border);
+      color: var(--sage-2); padding: .8rem 2rem; border-radius: 100px;
+      font-size: .88rem; font-weight: 600; text-decoration: none;
+      transition: background .2s var(--ease-out), border-color .2s var(--ease-out), transform .2s var(--ease-out);
+    }
+    .btn-ghost:hover {
+      background: var(--lemon-dim); border-color: rgba(178,235,118,.35);
+      transform: translateY(-2px);
+    }
+    .hero-stats {
+      display: flex; gap: 2.5rem; justify-content: center; flex-wrap: wrap;
+      animation: fade-in-up .6s .5s var(--ease-out) both;
+    }
+    .hero-stat { display: flex; flex-direction: column; align-items: center; }
+    .hero-stat-num {
+      font-family: 'Fraunces', serif;
+      font-size: 1.9rem; font-weight: 700; line-height: 1;
+      color: var(--lemon);
+    }
+    .hero-stat-lbl {
+      font-size: .68rem; color: var(--sage-4);
+      letter-spacing: .09em; text-transform: uppercase;
+      margin-top: .3rem; font-weight: 500;
+    }
+    .hero-stat-sep {
+      width: 1px; height: 2.5rem;
+      background: var(--border); align-self: center;
+    }
+    .scroll-hint {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .45rem;
+      animation: fade-in-up .6s .8s var(--ease-out) both;
+    }
+    .scroll-label { font-size: .62rem; letter-spacing: .15em; text-transform: uppercase; color: var(--sage-4); }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--lemon), transparent);
+      animation: scroll-anim 2s var(--ease-io) infinite;
+    }
+    @keyframes scroll-anim {
+      0%   { transform: scaleY(0); transform-origin: top; opacity:0; }
+      50%  { transform: scaleY(1); transform-origin: top; opacity:1; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity:0; }
+    }
+    @keyframes fade-in-down {
+      from { opacity:0; transform:translateY(-12px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes fade-in-up {
+      from { opacity:0; transform:translateY(22px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ── STATS BAND ── */
+    #stats {
+      background: var(--bg-1);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-band {
+      max-width: 1100px; margin: 0 auto; padding: 0 2rem;
+      display: grid; grid-template-columns: repeat(5, 1fr);
+    }
+    .stat-item {
+      padding: 2.5rem 1.5rem; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Fraunces', serif;
+      font-size: 2.5rem; font-weight: 700; line-height: 1;
+      color: var(--lemon); margin-bottom: .45rem;
+    }
+    .stat-lbl {
+      font-size: .73rem; color: var(--sage-4);
+      font-weight: 500; letter-spacing: .04em;
+    }
+
+    /* ── SECTION LAYOUT ── */
+    .sec { padding: 7rem 2rem; }
+    .sec-inner { max-width: 1100px; margin: 0 auto; }
+    .sec-alt { background: var(--bg-1); border-top: 1px solid var(--border); }
+
+    .s-eyebrow {
+      display: flex; align-items: center; gap: .7rem;
+      margin-bottom: 1.1rem;
+    }
+    .s-num {
+      font-size: .68rem; font-weight: 700; letter-spacing: .14em;
+      color: var(--lemon); opacity: .65;
+    }
+    .s-line { width: 28px; height: 1px; background: var(--border); }
+    .s-cat {
+      font-size: .68rem; font-weight: 600; letter-spacing: .13em;
+      color: var(--sage-4); text-transform: uppercase;
+    }
+    .s-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      font-weight: 700; line-height: 1.1; letter-spacing: -.025em;
+      color: var(--sage-1); margin-bottom: 3rem;
+    }
+    .s-title em { font-style: normal; color: var(--lemon); }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start;
+    }
+    .about-body p {
+      color: var(--sage-3); line-height: 1.8; font-size: .94rem;
+      margin-bottom: 1.2rem; font-weight: 300;
+    }
+    .about-body strong { color: var(--sage-2); font-weight: 600; }
+    .about-tags { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: 1.5rem; }
+    .tag {
+      padding: .28rem .75rem; border-radius: 6px;
+      font-size: .72rem; font-weight: 500; letter-spacing: .02em;
+    }
+    .tag-lemon {
+      background: rgba(178,235,118,.09); border: 1px solid rgba(178,235,118,.2);
+      color: var(--lemon);
+    }
+    .tag-sky {
+      background: rgba(186,235,194,.08); border: 1px solid rgba(186,235,194,.18);
+      color: var(--sky);
+    }
+    .tag-sage {
+      background: rgba(178,235,118,.04); border: 1px solid var(--border);
+      color: var(--sage-3);
+    }
+    .hcards { display: flex; flex-direction: column; gap: .9rem; }
+    .hcard {
+      background: var(--forest); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.35rem;
+      transition: border-color .25s var(--ease-out), transform .25s var(--ease-out);
+    }
+    .hcard:hover { border-color: var(--lemon-border); transform: translateX(4px); }
+    .hcard-ttl {
+      font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--lemon); margin-bottom: .45rem;
+    }
+    .hcard p { font-size: .84rem; color: var(--sage-3); line-height: 1.65; font-weight: 300; }
+
+    /* ── TIMELINE ── */
+    .timeline { position: relative; }
+    .tl-rail-ghost {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+      background: rgba(178,235,118,.09);
+    }
+    .tl-rail {
+      position: absolute; left: 0; top: 0; width: 1px; height: 0;
+      background: var(--lemon);
+      box-shadow: 0 0 10px rgba(178,235,118,.4);
+    }
+    .tl-item {
+      position: relative; padding-left: 2.5rem; margin-bottom: 3rem;
+    }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-dot {
+      position: absolute; left: -5px; top: 1.5rem;
+      width: 11px; height: 11px; border-radius: 50%;
+      background: var(--lemon);
+      border: 2px solid var(--bg-1);
+      box-shadow: 0 0 0 3px rgba(178,235,118,.2);
+    }
+    .tl-card {
+      background: var(--forest); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.75rem;
+      transition: border-color .25s var(--ease-out);
+    }
+    .tl-card:hover { border-color: var(--lemon-border); }
+    .tl-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      margin: -1.75rem -1.75rem .65rem -1.75rem;
+      padding: .85rem 1.75rem;
+      border-radius: 12px 12px 0 0;
+      position: sticky; top: calc(var(--header-h) + .4rem);
+      background: var(--forest); z-index: 5;
+      transition: box-shadow .2s var(--ease-out), border-color .2s var(--ease-out);
+    }
+    .tl-head.stuck {
+      box-shadow: 0 6px 24px rgba(0,0,0,.35);
+      border-bottom: 1px solid var(--lemon-border);
+    }
+    .tl-co { font-size: 1.05rem; font-weight: 700; color: var(--sage-1); }
+    .tl-period {
+      font-size: .73rem; color: var(--sage-4);
+      background: rgba(255,255,255,.04); border: 1px solid var(--border);
+      padding: .22rem .72rem; border-radius: 100px;
+      font-weight: 500; white-space: nowrap;
+    }
+    .tl-role-main {
+      font-size: .78rem; color: var(--lemon);
+      font-weight: 600; letter-spacing: .04em; margin-bottom: 1.25rem;
+    }
+    .subroles { display: flex; flex-direction: column; gap: 1.25rem; }
+    .sr { padding-top: 1.25rem; border-top: 1px solid var(--border); }
+    .sr:first-child { border-top: none; padding-top: 0; }
+    .sr-ttl { font-size: .86rem; font-weight: 600; color: var(--sky); margin-bottom: .2rem; }
+    .sr-period { font-size: .73rem; color: var(--sage-4); margin-bottom: .7rem; }
+    .bullets { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
+    .bullets li {
+      font-size: .84rem; color: var(--sage-3);
+      padding-left: 1.15rem; position: relative; line-height: 1.65; font-weight: 300;
+    }
+    .bullets li::before {
+      content: '';
+      position: absolute; left: 0; top: .56rem;
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--lemon); opacity: .55;
+    }
+    .hl { color: var(--lemon); font-weight: 600; }
+
+    /* ── SKILLS ── */
+    .skills-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.15rem;
+    }
+    .skill-cat {
+      background: var(--forest); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.45rem;
+      transition: border-color .25s var(--ease-out), transform .25s var(--ease-out);
+    }
+    .skill-cat:hover { border-color: var(--lemon-border); transform: translateY(-2px); }
+    .skill-ttl {
+      font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--lemon); margin-bottom: .95rem;
+      display: flex; align-items: center; gap: .45rem;
+    }
+    .skill-ttl span { display: flex; align-items: center; }
+    .stags { display: flex; flex-wrap: wrap; gap: .38rem; }
+    .stag {
+      background: rgba(178,235,118,.05); border: 1px solid var(--border);
+      color: var(--sage-3);
+      padding: .26rem .62rem; border-radius: 5px;
+      font-size: .74rem; font-weight: 500;
+      transition: background .2s var(--ease-out), color .2s var(--ease-out), border-color .2s var(--ease-out);
+      cursor: default;
+    }
+    .stag:hover {
+      background: rgba(178,235,118,.11); color: var(--lemon);
+      border-color: var(--lemon-border);
+    }
+
+    /* ── CERTS ── */
+    .cert-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+      gap: 1rem;
+    }
+    .cert-card {
+      background: var(--forest); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.3rem;
+      display: flex; gap: 1rem; align-items: flex-start;
+      transition: border-color .25s var(--ease-out), transform .25s var(--ease-out);
+    }
+    .cert-card:hover { border-color: var(--lemon-border); transform: translateY(-2px); }
+    .cert-ico {
+      width: 38px; height: 38px; border-radius: 8px;
+      background: var(--lemon-dim); border: 1px solid var(--lemon-border);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: var(--lemon);
+    }
+    .cert-card h4 { font-size: .84rem; font-weight: 600; line-height: 1.4; margin-bottom: .22rem; color: var(--sage-1); }
+    .cert-card p { font-size: .73rem; color: var(--sage-3); }
+
+    /* ── EDUCATION ── */
+    .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .edu-card {
+      background: var(--forest); border: 1px solid var(--border);
+      border-radius: 14px; padding: 2rem;
+      transition: border-color .25s var(--ease-out), transform .25s var(--ease-out);
+    }
+    .edu-card:hover { border-color: var(--lemon-border); transform: translateY(-3px); }
+    .edu-badge {
+      display: inline-block;
+      background: var(--lemon-dim); border: 1px solid var(--lemon-border);
+      color: var(--lemon);
+      padding: .26rem .72rem; border-radius: 100px;
+      font-size: .68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .edu-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: .3rem; color: var(--sage-1); line-height: 1.3; }
+    .edu-degree { font-size: .84rem; color: var(--sage-3); margin-bottom: 1rem; font-weight: 300; }
+    .edu-pts { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
+    .edu-pts li {
+      font-size: .79rem; color: var(--sage-3);
+      padding-left: 1.1rem; position: relative;
+    }
+    .edu-pts li::before {
+      content: ''; position: absolute; left: 0; top: .45rem;
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--lemon); opacity: .45;
+    }
+
+    /* ── ACHIEVEMENTS ── */
+    .ach-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+      gap: 1rem;
+    }
+    .ach-card {
+      background: var(--forest); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.3rem;
+      display: flex; gap: 1rem; align-items: flex-start;
+      transition: border-color .25s var(--ease-out), transform .25s var(--ease-out);
+    }
+    .ach-card:hover { border-color: var(--lemon-border); transform: translateY(-2px); }
+    .ach-ico {
+      width: 40px; height: 40px; border-radius: 8px;
+      background: var(--lemon-dim); border: 1px solid var(--lemon-border);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: var(--lemon);
+    }
+    .ach-card h4 { font-size: .87rem; font-weight: 600; margin-bottom: .22rem; color: var(--sage-1); }
+    .ach-card p { font-size: .77rem; color: var(--sage-3); line-height: 1.55; font-weight: 300; }
+
+    /* ── LANGUAGES ── */
+    /* ── TESTIMONIAL ── */
+    #references { background: var(--bg-1); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .testi-wrap { max-width: 860px; margin: 3.5rem auto 0; position: relative; }
+    .testi-openquote {
+      font-family: 'Fraunces', serif; font-size: 7rem; line-height: .55;
+      color: var(--lemon); display: block; margin-bottom: 1.2rem;
+      user-select: none; pointer-events: none;
+    }
+    .testi-slides { display: grid; }
+    .testi-slide {
+      grid-area: 1 / 1;
+      opacity: 0; transform: translateY(18px); visibility: hidden;
+      transition: opacity .7s var(--ease-out), transform .7s var(--ease-out), visibility 0s .7s;
+      pointer-events: none;
+    }
+    .testi-slide.ts-active {
+      opacity: 1; transform: translateY(0); visibility: visible;
+      transition: opacity .7s var(--ease-out), transform .7s var(--ease-out), visibility 0s 0s;
+      pointer-events: auto;
+    }
+    .testi-headline {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.55rem, 3.2vw, 2.45rem);
+      font-weight: 700; line-height: 1.22;
+      color: var(--sage-1); letter-spacing: -.025em;
+      margin-bottom: 1.6rem;
+    }
+    .testi-headline em { color: var(--lemon); font-style: normal; }
+    .testi-body {
+      font-size: .88rem; color: var(--sage-3); line-height: 1.75;
+      border-left: 2px solid var(--lemon-border); padding-left: 1.25rem;
+      margin-bottom: 2rem; max-width: 680px;
+    }
+    .testi-nav { display: flex; align-items: center; gap: .55rem; margin-top: 3rem; }
+    .testi-dot {
+      height: 6px; border-radius: 3px; border: none; cursor: pointer;
+      background: var(--sage-4); width: 6px;
+      transition: background .35s var(--ease-out), width .35s var(--ease-out);
+      padding: 0;
+    }
+    .testi-dot.td-active { background: var(--lemon); width: 28px; }
+    .testi-dot:hover:not(.td-active) { background: var(--sage-3); }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--bg-1); border-top: 1px solid var(--border); }
+    .contact-inner {
+      max-width: 680px; margin: 0 auto;
+      padding: 7rem 2rem;
+      text-align: center;
+    }
+    .contact-inner .s-eyebrow { justify-content: center; }
+    .contact-inner .s-title { text-align: center; }
+    .contact-desc {
+      color: var(--sage-3); font-size: .96rem; line-height: 1.78;
+      margin-bottom: 2.5rem; font-weight: 300;
+    }
+    .contact-links {
+      display: flex; gap: .875rem; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+    .contact-link {
+      display: flex; align-items: center; gap: .6rem;
+      background: var(--forest); border: 1px solid var(--border);
+      color: var(--sage-2); padding: .85rem 1.4rem;
+      border-radius: 12px; text-decoration: none;
+      font-size: .86rem; font-weight: 500;
+      transition: border-color .25s var(--ease-out), background .25s var(--ease-out), transform .25s var(--ease-out);
+    }
+    .contact-link:hover {
+      border-color: var(--lemon-border);
+      background: rgba(178,235,118,.05);
+      transform: translateY(-2px);
+    }
+    .contact-link span { display: flex; align-items: center; color: var(--lemon); flex-shrink: 0; }
+    .contact-note { font-size: .76rem; color: var(--sage-4); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 1.5rem 2rem;
+      color: var(--sage-4); font-size: .74rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── MARQUEE TICKER ── */
+    .marquee-band {
+      overflow: hidden; background: var(--bg-1);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1.1rem 0;
+    }
+    .marquee-track {
+      display: flex; width: max-content;
+      animation: marquee-scroll 38s linear infinite;
+    }
+    .marquee-band:hover .marquee-track { animation-play-state: paused; }
+    .marquee-content {
+      display: flex; align-items: center; gap: 2rem;
+      padding-right: 2rem; white-space: nowrap;
+    }
+    .marquee-item {
+      font-size: .78rem; font-weight: 500;
+      color: var(--sage-3); letter-spacing: .03em;
+    }
+    .marquee-dot { color: var(--lemon); font-size: .4rem; line-height: 1; }
+    @keyframes marquee-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── STAT NUM SLOT BASE ── */
+    .stat-num { overflow: hidden; }
+
+    /* ── TILT TEXT SHARPNESS ── */
+    .hcard, .tl-card, .skill-cat, .cert-card, .edu-card, .ach-card, .stat-item {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform-style: flat;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── SCROLL ANIMATIONS ── */
+    .reveal {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity .55s var(--ease-out), transform .55s var(--ease-out);
+    }
+    .reveal.vis { opacity: 1; transform: translateY(0); }
+    .reveal-x {
+      opacity: 0; transform: translateX(-18px);
+      transition: opacity .5s var(--ease-out), transform .5s var(--ease-out);
+    }
+    .reveal-x.vis { opacity: 1; transform: translateX(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .edu-grid   { grid-template-columns: 1fr; }
+      .stats-band { grid-template-columns: repeat(3, 1fr); }
+      .stats-band .stat-item:nth-child(3) { border-right: none; }
+      .stats-band .stat-item:nth-child(4),
+      .stats-band .stat-item:nth-child(5) { border-top: 1px solid var(--border); }
+      .stats-band .stat-item:nth-child(5) { border-right: none; }
+    }
+    @media (max-width: 680px) {
+      nav { padding: 0 1.25rem; }
+      .nav-links { display: none; }
+      .hero-stat-sep { display: none; }
+      .hero-stats { gap: 1.75rem; }
+      .stats-band { grid-template-columns: 1fr 1fr; }
+      .stats-band .stat-item { border-right: none !important; border-bottom: 1px solid var(--border); }
+      .stats-band .stat-item:nth-child(4),
+      .stats-band .stat-item:nth-child(5) { border-top: none; }
+      .stats-band .stat-item:last-child { border-bottom: none; }
+      .contact-links { flex-direction: column; align-items: stretch; }
+      .testi-headline { font-size: 1.45rem; }
+    }
+    @media (max-width: 480px) {
+      .hero-actions { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-ghost { width: 100%; text-align: center; }
+      .sec { padding: 5rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="navbar">
+  <div class="nav-logo">Adrian Ma</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#achievements">Awards</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Let's Connect</a>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      Open to New Opportunities
+    </div>
+    <h1 class="hero-name">
+      <span class="name-clip"><span class="name-text">Adrian</span></span>
+      <span class="name-clip"><span class="name-text name-lemon">Ma</span></span>
+    </h1>
+    <div class="hero-roles">
+      <span class="tw-text" id="tw"></span><span class="cursor-bar"></span>
+    </div>
+    <p class="hero-desc">
+      CPA-backed Strategy Consultant and Product Leader with 5+ years at Capco and Deloitte.
+      Turning complex financial and technical challenges into executive-ready insights and measurable outcomes.
+    </p>
+    <div class="hero-actions">
+      <a href="#experience" class="btn-primary">View My Work</a>
+      <a href="#contact" class="btn-ghost">Get In Touch</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Scroll</span>
+  </div>
+</section>
+
+<!-- ══ STATS BAND ══ -->
+<div id="stats">
+  <div class="stats-band">
+    <div class="stat-item reveal">
+      <div class="stat-num"><span class="ctr" data-t="5">0</span>+</div>
+      <div class="stat-lbl">Years of Experience</div>
+    </div>
+    <div class="stat-item reveal" style="transition-delay:.07s">
+      <div class="stat-num">$<span class="ctr" data-t="550">0</span>M</div>
+      <div class="stat-lbl">Savings Gap Modeled</div>
+    </div>
+    <div class="stat-item reveal" style="transition-delay:.14s">
+      <div class="stat-num"><span class="ctr" data-t="4">0</span></div>
+      <div class="stat-lbl">Languages Spoken</div>
+    </div>
+    <div class="stat-item reveal" style="transition-delay:.21s">
+      <div class="stat-num"><span class="ctr" data-t="3">0</span>×</div>
+      <div class="stat-lbl">Deloitte Silver Dot Award</div>
+    </div>
+    <div class="stat-item reveal" style="transition-delay:.28s">
+      <div class="stat-num">3.79</div>
+      <div class="stat-lbl">University GPA / 4.0</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ABOUT ══ -->
+<div id="about">
+  <div class="sec sec-inner">
+    <div class="s-eyebrow">
+      <span class="s-num">01</span>
+      <div class="s-line"></div>
+      <span class="s-cat">About Me</span>
+    </div>
+    <h2 class="s-title">Strategy. Product. Finance.<br><em>All in one.</em></h2>
+    <div class="about-grid">
+      <div class="about-body reveal">
+        <p>
+          I'm a <strong>Senior Consultant at Capco</strong> with a rare blend of CPA-level financial
+          rigor, Big 4 audit depth, and hands-on Agile product delivery. I've led transformative
+          engagements across Tier One banking, payments, and insurance — translating messy operational
+          realities into clear strategy and measurable outcomes.
+        </p>
+        <p>
+          Whether building a <strong>$550M cost optimization financial model</strong> for a national
+          bank, designing a <strong>FAIR + Monte Carlo cyber risk framework</strong>, or steering two cross-functional
+          Agile squads to launch a mission-critical <strong>Real-Time Rails fraud platform</strong> — I bring the same
+          relentless focus on impact.
+        </p>
+        <p>
+          I'm equally at home presenting to a C-suite as I am in a product backlog session or
+          reviewing ITGC exceptions. That breadth is rare — and it's what I bring to every engagement.
+        </p>
+        <div class="about-tags">
+          <span class="tag tag-lemon">CPA Ontario</span>
+          <span class="tag tag-lemon">SAFe Scrum Master</span>
+          <span class="tag tag-sky">Strategy Consulting</span>
+          <span class="tag tag-sky">Product Management</span>
+          <span class="tag tag-sky">Financial Modeling</span>
+          <span class="tag tag-sage">IT Audit</span>
+          <span class="tag tag-sage">Risk Advisory</span>
+          <span class="tag tag-sage">Cyber Risk</span>
+          <span class="tag tag-sage">Agile / SAFe</span>
+        </div>
+      </div>
+      <div class="hcards reveal" style="transition-delay:.12s">
+        <div class="hcard">
+          <div class="hcard-ttl">Strategic Impact</div>
+          <p>Built and owned a multi-year financial forecasting model bridging a $550M savings gap for Canadian Personal and Business Banking through FY30.</p>
+        </div>
+        <div class="hcard">
+          <div class="hcard-ttl">Executive Presence</div>
+          <p>Master storyteller who has influenced multi-million dollar investment decisions at the C-suite level across Big Five banks and Tier One insurers.</p>
+        </div>
+        <div class="hcard">
+          <div class="hcard-ttl">Product Delivery</div>
+          <p>Led two Agile squads (UX, Engineering, QA) from discovery through UAT for a high-visibility Real-Time Rails fraud platform at a major payments provider.</p>
+        </div>
+        <div class="hcard">
+          <div class="hcard-ttl">Risk &amp; Compliance Expertise</div>
+          <p>Deep command of SOC 1/2, ISO 27001, NIST CSF, COBIT, ITGC, and ICFR — developed across 3+ years of specialized assurance work at Deloitte Canada.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EXPERIENCE ══ -->
+<div id="experience" class="sec sec-alt">
+  <div class="sec-inner">
+    <div class="s-eyebrow">
+      <span class="s-num">02</span>
+      <div class="s-line"></div>
+      <span class="s-cat">Work Experience</span>
+    </div>
+    <h2 class="s-title">Where I've <em>Made an Impact</em></h2>
+
+    <div class="timeline">
+      <div class="tl-rail-ghost"></div>
+      <div class="tl-rail" id="tl-rail"></div>
+
+      <!-- Capco -->
+      <div class="tl-item reveal-x">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-head">
+            <span class="tl-co">Capco</span>
+            <span class="tl-period">August 2024 – Present</span>
+          </div>
+          <div class="tl-role-main">Senior Consultant</div>
+          <div class="subroles">
+            <div class="sr">
+              <div class="sr-ttl">Strategy Consultant — Cost Optimization &amp; Business Transformation · Tier One Bank</div>
+              <div class="sr-period">February 2026 – Present</div>
+              <ul class="bullets">
+                <li>Created and owned a strategic financial forecasting model bridging a <span class="hl">$550M savings gap</span> for Canadian Personal and Business Banking through FY30, integrating target roadmaps and multi-year cost drivers.</li>
+                <li>Evaluated legacy banking workflows to identify high-potential areas for AI integration, developing business cases for automation initiatives to reduce long-term technical debt.</li>
+                <li>Synthesized complex financial datasets into executive-level insights, enabling leadership to prioritize high-impact initiatives and optimize resource allocation across the enterprise.</li>
+                <li>Partnered with cross-functional business segment leaders to translate operational requirements into a unified financial strategy aligned with the bank's long-term transformation roadmap.</li>
+              </ul>
+            </div>
+            <div class="sr">
+              <div class="sr-ttl">Strategy Consultant — Cybersecurity Team · Tier One Insurance Provider</div>
+              <div class="sr-period">November 2025 – January 2026</div>
+              <ul class="bullets">
+                <li>Built a sophisticated cyber risk quantification framework using <span class="hl">FAIR methodology and Monte Carlo simulations</span>, translating complex risks into actionable business insights.</li>
+                <li>Synthesized technical model outputs into a high-impact C-suite package, successfully influencing <span class="hl">multi-million dollar strategic investment decisions</span>.</li>
+                <li>Hosted 3-day workshops providing strategic direction on cyber risk quantification; delivered a 6-month future state roadmap bridging current limitations and long-term business objectives.</li>
+              </ul>
+            </div>
+            <div class="sr">
+              <div class="sr-ttl">Product / Delivery Manager — RTR Fraud Platform · Tier One Payments Provider</div>
+              <div class="sr-period">February 2025 – October 2025</div>
+              <ul class="bullets">
+                <li>Led <span class="hl">two cross-functional Agile squads</span> (UX, Engineering, QA); owned the end-to-end product roadmap, backlog prioritization, and delivery timelines for a high-visibility Real-Time Rails fraud platform.</li>
+                <li>Led the discovery-to-launch lifecycle for <span class="hl">three major product milestones</span> (UAT, industry testing), managing inter-team dependencies and technical trade-offs to ensure on-time delivery.</li>
+                <li>Championed the product vision to senior leadership and the EPMO, using data-backed insights to gain alignment on feature prioritization and risk mitigation strategies.</li>
+                <li>Facilitated rapid feedback loops and retrospectives to iterate on product features, improving squad velocity and ensuring the final build met all PRD requirements.</li>
+              </ul>
+            </div>
+            <div class="sr">
+              <div class="sr-ttl">Strategy Consultant — Enterprise Protect Division · Tier One Bank</div>
+              <div class="sr-period">August 2024 – January 2025</div>
+              <ul class="bullets">
+                <li>Led governance and program management structure for enterprise risk management to address MRA requirements, presenting to Senior Manager, AVP, and VP levels.</li>
+                <li>Led the rollout of new workflow stages within the GRC system, bridging business stakeholders and technical developers to ensure the solution met real-world user needs.</li>
+                <li>Conducted key analysis of thematic issues, red key risk indicators, and high residual risk control exceptions, recommending elevation decisions with business information security officers and VPs.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deloitte -->
+      <div class="tl-item reveal-x" style="transition-delay:.1s">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-head">
+            <span class="tl-co">Deloitte Canada</span>
+            <span class="tl-period">June 2020 – August 2024</span>
+          </div>
+          <div class="tl-role-main">Multiple Roles — Risk Advisory, IT &amp; Specialized Assurance, Internal Audit</div>
+          <div class="subroles">
+            <div class="sr">
+              <div class="sr-ttl">Senior Consultant — Risk Advisory, IT &amp; Specialized Assurance</div>
+              <div class="sr-period">December 2023 – August 2024</div>
+              <ul class="bullets">
+                <li>Tested ITGC and ICFR controls at application, database, and server level across Windows, AIX, Linux, Mainframe, AWS, SAP, AS400, and databases including MS SQL, Oracle, DB2, and PostgreSQL.</li>
+                <li>Assessed sufficiency of cybersecurity programs for clients and analyzed the impact of cybersecurity breaches, providing remediation guidance.</li>
+                <li>Spearheaded requests for proposals for future projects, successfully landing <span class="hl">3 new client opportunities</span> for the organization.</li>
+              </ul>
+            </div>
+            <div class="sr">
+              <div class="sr-ttl">Consultant — Risk Advisory, IT &amp; Specialized Assurance</div>
+              <div class="sr-period">September 2021 – November 2023</div>
+              <ul class="bullets">
+                <li>Effectively identified breaches in compliance and developed and communicated recommendations for deficiencies to improve control effectiveness and governing policies across a wide range of clients.</li>
+                <li>Provided clients with guidance and recommendations to execute data conversions and system implementations successfully.</li>
+              </ul>
+            </div>
+            <div class="sr">
+              <div class="sr-ttl">Financial Analyst — Controllership</div>
+              <div class="sr-period">June 2020 – December 2020</div>
+              <ul class="bullets">
+                <li>Performed data analysis on SAP extracts, developed control testing templates in Excel, and completed data flow mapping with MS Visio.</li>
+                <li>Prepared journal entries, financial statements, and reconciliations in accordance with financial reporting standards.</li>
+                <li>Tested and designed controls for user access review, logical access, and segregation of duties.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UofT -->
+      <div class="tl-item reveal-x" style="transition-delay:.2s">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-head">
+            <span class="tl-co">University of Toronto — Faculty of Arts &amp; Science Finance Office</span>
+            <span class="tl-period">Jan 2019 – Aug 2019</span>
+          </div>
+          <div class="tl-role-main">Financial Officer Co-op</div>
+          <ul class="bullets" style="margin-top:.7rem">
+            <li>Pivotal role in the implementation of the annual budget (<span class="hl">approx. $600M</span>) in SAP; developed budget analysis skills and managed year-end reconciliation processes.</li>
+            <li>Accurately recorded and processed <span class="hl">1,000+ accounting transfers</span>, debit memos, and funding transactions within SAP.</li>
+            <li>Performed first-level audits on financial statements from <span class="hl">over 60 external units</span> and verified records of 650+ employees in HRIS.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SKILLS ══ -->
+<div id="skills">
+  <div class="sec sec-inner">
+    <div class="s-eyebrow">
+      <span class="s-num">03</span>
+      <div class="s-line"></div>
+      <span class="s-cat">Expertise</span>
+    </div>
+    <h2 class="s-title">Skills <em>&amp; Tools</em></h2>
+    <div class="skills-grid">
+      <div class="skill-cat reveal">
+        <div class="skill-ttl"><span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></span> Strategy &amp; Consulting</div>
+        <div class="stags">
+          <span class="stag">Business Transformation</span>
+          <span class="stag">Cost Optimization</span>
+          <span class="stag">Financial Modeling</span>
+          <span class="stag">Executive Presentations</span>
+          <span class="stag">FAIR Methodology</span>
+          <span class="stag">Monte Carlo Simulations</span>
+          <span class="stag">Process Mapping</span>
+          <span class="stag">Stakeholder Management</span>
+        </div>
+      </div>
+      <div class="skill-cat reveal" style="transition-delay:.07s">
+        <div class="skill-ttl"><span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span> Product &amp; Delivery</div>
+        <div class="stags">
+          <span class="stag">Product Roadmapping</span>
+          <span class="stag">Backlog Management</span>
+          <span class="stag">Agile / SAFe</span>
+          <span class="stag">Sprint Planning</span>
+          <span class="stag">UAT Management</span>
+          <span class="stag">EPMO Governance</span>
+          <span class="stag">Risk Management</span>
+          <span class="stag">Retrospectives</span>
+        </div>
+      </div>
+      <div class="skill-cat reveal" style="transition-delay:.14s">
+        <div class="skill-ttl"><span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span> Risk &amp; Compliance</div>
+        <div class="stags">
+          <span class="stag">SOC 1 / SOC 2</span>
+          <span class="stag">ISO 27001</span>
+          <span class="stag">NIST CSF</span>
+          <span class="stag">COBIT</span>
+          <span class="stag">Hi-Trust</span>
+          <span class="stag">ITGC</span>
+          <span class="stag">ICFR</span>
+          <span class="stag">Cyber Risk Quantification</span>
+          <span class="stag">GRC Systems</span>
+          <span class="stag">Control Testing</span>
+        </div>
+      </div>
+      <div class="skill-cat reveal" style="transition-delay:.21s">
+        <div class="skill-ttl"><span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span> Data &amp; Analytics</div>
+        <div class="stags">
+          <span class="stag">Power BI</span>
+          <span class="stag">Tableau</span>
+          <span class="stag">Excel (Advanced)</span>
+          <span class="stag">SQL</span>
+          <span class="stag">SAP</span>
+          <span class="stag">Archer</span>
+          <span class="stag">MS Access</span>
+          <span class="stag">MS Visio</span>
+        </div>
+      </div>
+      <div class="skill-cat reveal" style="transition-delay:.28s">
+        <div class="skill-ttl"><span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span> Tools &amp; Platforms</div>
+        <div class="stags">
+          <span class="stag">Jira</span>
+          <span class="stag">Confluence</span>
+          <span class="stag">SharePoint</span>
+          <span class="stag">FIS</span>
+          <span class="stag">HRIS</span>
+          <span class="stag">PowerPoint</span>
+          <span class="stag">AWS</span>
+        </div>
+      </div>
+      <div class="skill-cat reveal" style="transition-delay:.35s">
+        <div class="skill-ttl"><span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></span> Systems &amp; Environments</div>
+        <div class="stags">
+          <span class="stag">Windows / AIX / Linux</span>
+          <span class="stag">Mainframe</span>
+          <span class="stag">AS400</span>
+          <span class="stag">MS SQL</span>
+          <span class="stag">Oracle DB</span>
+          <span class="stag">DB2</span>
+          <span class="stag">PostgreSQL</span>
+          <span class="stag">SAP ERP</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SKILLS MARQUEE ══ -->
+<div class="marquee-band" aria-hidden="true">
+  <div class="marquee-track">
+    <div class="marquee-content">
+      <span class="marquee-item">Business Transformation</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Financial Modeling</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Product Roadmapping</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Cyber Risk Quantification</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Agile / SAFe</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Monte Carlo Simulations</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">SOC 1 / SOC 2</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Executive Presentations</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Power BI</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">ISO 27001</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Stakeholder Management</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">FAIR Methodology</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Tableau</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Cost Optimization</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">EPMO Governance</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">SQL</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">NIST CSF</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Backlog Management</span><span class="marquee-dot">◆</span>
+    </div>
+    <div class="marquee-content">
+      <span class="marquee-item">Business Transformation</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Financial Modeling</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Product Roadmapping</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Cyber Risk Quantification</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Agile / SAFe</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Monte Carlo Simulations</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">SOC 1 / SOC 2</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Executive Presentations</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Power BI</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">ISO 27001</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Stakeholder Management</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">FAIR Methodology</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Tableau</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Cost Optimization</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">EPMO Governance</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">SQL</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">NIST CSF</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Backlog Management</span><span class="marquee-dot">◆</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CERTIFICATIONS ══ -->
+<div id="certifications" class="sec sec-alt">
+  <div class="sec-inner">
+    <div class="s-eyebrow">
+      <span class="s-num">04</span>
+      <div class="s-line"></div>
+      <span class="s-cat">Certifications</span>
+    </div>
+    <h2 class="s-title">Credentials <em>&amp; Training</em></h2>
+    <div class="cert-grid">
+      <div class="cert-card reveal">
+        <div class="cert-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+        <div>
+          <h4>Certified SAFe® Scrum Master</h4>
+          <p>Scaled Agile Inc. · 2025</p>
+        </div>
+      </div>
+      <div class="cert-card reveal" style="transition-delay:.07s">
+        <div class="cert-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div>
+        <div>
+          <h4>Career Essentials in Data Analysis</h4>
+          <p>Microsoft &amp; LinkedIn · 2024</p>
+        </div>
+      </div>
+      <div class="cert-card reveal" style="transition-delay:.14s">
+        <div class="cert-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+        <div>
+          <h4>SQL: Data Reporting &amp; Analysis</h4>
+          <p>LinkedIn Learning · 2023</p>
+        </div>
+      </div>
+      <div class="cert-card reveal" style="transition-delay:.21s">
+        <div class="cert-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div>
+          <h4>Data Analytics: 1 Foundations</h4>
+          <p>LinkedIn Learning · 2023</p>
+        </div>
+      </div>
+      <div class="cert-card reveal" style="transition-delay:.28s">
+        <div class="cert-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></div>
+        <div>
+          <h4>From Excel to Tableau</h4>
+          <p>LinkedIn Learning · 2023</p>
+        </div>
+      </div>
+      <div class="cert-card reveal" style="transition-delay:.35s">
+        <div class="cert-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+        <div>
+          <h4>Financial Information System (FIS) Standard Curriculum</h4>
+          <p>2019</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EDUCATION ══ -->
+<div id="education">
+  <div class="sec sec-inner">
+    <div class="s-eyebrow">
+      <span class="s-num">05</span>
+      <div class="s-line"></div>
+      <span class="s-cat">Education</span>
+    </div>
+    <h2 class="s-title">Academic <em>Foundation</em></h2>
+    <div class="edu-grid">
+      <div class="edu-card reveal">
+        <span class="edu-badge">CPA Ontario</span>
+        <h3>Chartered Professional Accountant</h3>
+        <div class="edu-degree">Successful CFE Writer</div>
+        <ul class="edu-pts">
+          <li>Common Final Examination — Passed (September 2023)</li>
+          <li>Canada's premier accounting designation</li>
+          <li>CPA designation pathway completed</li>
+        </ul>
+      </div>
+      <div class="edu-card reveal" style="transition-delay:.1s">
+        <span class="edu-badge">University of Toronto Scarborough</span>
+        <h3>Bachelor of Business Administration</h3>
+        <div class="edu-degree">Management Co-op · Specialist in Accounting · Class of 2021</div>
+        <ul class="edu-pts">
+          <li>CGPA: 3.79 / 4.0</li>
+          <li>Dean's List: 2018, 2019, 2020, 2021</li>
+          <li>Teaching Assistant — Intro to Financial Accounting II</li>
+          <li>Management Co-op Program</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ACHIEVEMENTS ══ -->
+<div id="achievements" class="sec sec-alt">
+  <div class="sec-inner">
+    <div class="s-eyebrow">
+      <span class="s-num">06</span>
+      <div class="s-line"></div>
+      <span class="s-cat">Recognition</span>
+    </div>
+    <h2 class="s-title">Awards <em>&amp; Achievements</em></h2>
+    <div class="ach-grid">
+      <div class="ach-card reveal">
+        <div class="ach-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+        <div>
+          <h4>Deloitte Silver Dot Award — Outstanding Contribution</h4>
+          <p>Awarded three times: December 2022, March 2023 &amp; June 2023</p>
+        </div>
+      </div>
+      <div class="ach-card reveal" style="transition-delay:.07s">
+        <div class="ach-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+        <div>
+          <h4>Dean's List — University of Toronto Scarborough</h4>
+          <p>Four consecutive years: 2018, 2019, 2020 &amp; 2021</p>
+        </div>
+      </div>
+      <div class="ach-card reveal" style="transition-delay:.14s">
+        <div class="ach-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div>
+          <h4>Ernst &amp; Young Scholarship in Commerce</h4>
+          <p>$5,000 · 2020</p>
+        </div>
+      </div>
+      <div class="ach-card reveal" style="transition-delay:.21s">
+        <div class="ach-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
+        <div>
+          <h4>Frank Faubert Scholarship — University of Toronto Scarborough</h4>
+          <p>$12,000 · 2017</p>
+        </div>
+      </div>
+      <div class="ach-card reveal" style="transition-delay:.28s">
+        <div class="ach-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div>
+          <h4>Ontario Volunteer Service Award</h4>
+          <p>2015 · Recognized for dedicated community service</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REFERENCES ══ -->
+<div id="references">
+  <div class="sec sec-inner">
+    <div class="s-eyebrow reveal">
+      <span class="s-num">07</span>
+      <div class="s-line"></div>
+      <span class="s-cat">Reference</span>
+    </div>
+    <h2 class="s-title reveal">Trusted by <em>Industry Leaders</em></h2>
+
+    <div class="testi-wrap reveal">
+      <span class="testi-openquote" aria-hidden="true">&ldquo;</span>
+
+      <div class="testi-slides" id="testi-slides">
+
+        <!-- Quote 1 -->
+        <div class="testi-slide ts-active">
+          <p class="testi-headline">The <em>most valuable</em> member of our Squad</p>
+          <p class="testi-body">Adrian was absolutely critical to the success of our team, and I can confidently say he was the most valuable member of our Squad. We all felt incredibly lucky to have had Adrian assigned to our Squad from Capco.</p>
+        </div>
+
+        <!-- Quote 2 -->
+        <div class="testi-slide">
+          <p class="testi-headline">I never hesitated for a moment — <em>complete trust</em> in Adrian's ability</p>
+          <p class="testi-body">There were times where I, as the Product Manager, was unexpectedly pulled into an urgent matter and I would ask Adrian to take over some of my responsibilities. I never hesitated for a moment because I had complete trust in Adrian's ability to manage our Squad and communicate with me.</p>
+        </div>
+
+        <!-- Quote 3 -->
+        <div class="testi-slide">
+          <p class="testi-headline">Earning the trust of engineers, designers, risk partners, and <em>senior leadership alike</em></p>
+          <p class="testi-body">Adrian led two cross-functional agile squads spanning design, engineering, UX, and QA. He navigated complex inter-team dependencies and made thoughtful technical trade-offs with maturity and confidence, earning the trust of engineers, designers, risk partners, and senior leadership alike.</p>
+        </div>
+
+        <!-- Quote 4 -->
+        <div class="testi-slide">
+          <p class="testi-headline">Adrian <em>embodies the traits</em> of an excellent Product Manager</p>
+          <p class="testi-body">I can say with a very high degree of confidence that Adrian embodies the traits of an excellent Product Manager and I would be referring him to a position on our team in an instant if we had any openings. He thrives in fast-paced environments and consistently delivers products that create real business and customer value.</p>
+        </div>
+
+        <!-- Quote 5 -->
+        <div class="testi-slide">
+          <p class="testi-headline"><em>Any team</em> would be lucky to have him</p>
+          <p class="testi-body">I would highly recommend Adrian for future Product Manager roles, particularly in fintech, payments, or platform-oriented organizations where strong execution, sound judgment, and ownership are critical. Any team would be lucky to have him.</p>
+        </div>
+
+      </div><!-- /testi-slides -->
+
+      <div class="testi-nav" id="testi-nav">
+        <button class="testi-dot td-active" data-i="0" aria-label="Quote 1"></button>
+        <button class="testi-dot" data-i="1" aria-label="Quote 2"></button>
+        <button class="testi-dot" data-i="2" aria-label="Quote 3"></button>
+        <button class="testi-dot" data-i="3" aria-label="Quote 4"></button>
+        <button class="testi-dot" data-i="4" aria-label="Quote 5"></button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ CONTACT ══ -->
+<div id="contact">
+  <div class="contact-inner">
+    <div class="s-eyebrow reveal">
+      <span class="s-num">08</span>
+      <div class="s-line"></div>
+      <span class="s-cat">Contact</span>
+    </div>
+    <h2 class="s-title reveal">Let's Build <em>Something Together</em></h2>
+    <p class="contact-desc reveal">
+      Whether you're looking for a strategy consultant, a product leader, or a finance-meets-technology
+      expert — I'd love to connect and explore how I can drive impact for your organization.
+    </p>
+    <div class="contact-links reveal">
+      <a href="tel:4373443173" class="contact-link">
+        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.9 10.93a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.81 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>(437) 344-3173
+      </a>
+      <a href="mailto:adrianmacy19@gmail.com" class="contact-link">
+        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>adrianmacy19@gmail.com
+      </a>
+      <a href="https://www.linkedin.com/in/adrian-ma19/" target="_blank" class="contact-link">
+        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span>LinkedIn Profile
+      </a>
+      <a href="Website Assets/Resume 2026.docx.pdf" download="Adrian_Ma_Resume_2026.pdf" class="contact-link">
+        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>Download Resume
+      </a>
+    </div>
+    <p class="contact-note reveal">Based in Toronto, Ontario · Open to remote &amp; hybrid opportunities</p>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <p>© 2026 Adrian Ma &nbsp;·&nbsp; Toronto, Ontario, Canada</p>
+</footer>
+
+<script>
+  // ── TESTIMONIAL CAROUSEL ──
+  (function() {
+    const slides = Array.from(document.querySelectorAll('.testi-slide'));
+    const dots   = Array.from(document.querySelectorAll('.testi-dot'));
+    if (!slides.length) return;
+
+    let cur = 0, timer;
+
+    function goTo(i) {
+      slides[cur].classList.remove('ts-active');
+      dots[cur].classList.remove('td-active');
+      cur = (i + slides.length) % slides.length;
+      slides[cur].classList.add('ts-active');
+      dots[cur].classList.add('td-active');
+    }
+
+    function startTimer() {
+      clearInterval(timer);
+      timer = setInterval(() => goTo(cur + 1), 5500);
+    }
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => { goTo(+dot.dataset.i); startTimer(); });
+    });
+
+    startTimer();
+  })();
+
+  // ── READING PROGRESS BAR ──
+  const bar = document.createElement('div');
+  bar.style.cssText = 'position:fixed;top:0;left:0;width:0%;height:2px;background:var(--lemon);z-index:200;pointer-events:none;box-shadow:0 0 8px rgba(178,235,118,.55);';
+  document.body.prepend(bar);
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (Math.min(window.scrollY / h, 1) * 100) + '%';
+  }, { passive: true });
+
+  // ── NAV SCROLL ──
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () =>
+    nav.classList.toggle('scrolled', window.scrollY > 40)
+  , { passive: true });
+
+  // ── TYPEWRITER ──
+  const roles = [
+    'Strategy Consulting.', 'Product Leadership.', 'Financial Innovation.',
+    'Risk & Compliance.', 'Agile Delivery.', 'Data-Driven Insights.',
+  ];
+  let ri = 0, ci = 0, deleting = false;
+  const tw = document.getElementById('tw');
+  function tick() {
+    const r = roles[ri];
+    if (deleting) {
+      tw.textContent = r.slice(0, --ci);
+      if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; setTimeout(tick, 420); return; }
+    } else {
+      tw.textContent = r.slice(0, ++ci);
+      if (ci === r.length) { deleting = true; setTimeout(tick, 2100); return; }
+    }
+    setTimeout(tick, deleting ? 40 : 70);
+  }
+  setTimeout(tick, 800);
+
+  // ── SCROLL REVEAL ──
+  const revObs = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); }),
+    { threshold: 0.08, rootMargin: '0px 0px -36px 0px' }
+  );
+  document.querySelectorAll('.reveal, .reveal-x').forEach(el => revObs.observe(el));
+
+  // ── SLOT-MACHINE COUNTERS ──
+  const allStatNums = Array.from(document.querySelectorAll('.stat-num'));
+  const ctrObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const t = parseFloat(el.dataset.t);
+      const isInt = Number.isInteger(t);
+      const numEl = el.closest('.stat-num');
+
+      if (numEl && !numEl.dataset.slotted) {
+        numEl.dataset.slotted = '1';
+        const idx = allStatNums.indexOf(numEl);
+        const delay = idx * 90;
+        // Wrap all children in a slide-up inner span
+        const inner = document.createElement('span');
+        inner.style.cssText = `display:block;transform:translateY(110%);transition:transform 0.95s ${delay}ms cubic-bezier(0.16,1,0.3,1);`;
+        Array.from(numEl.childNodes).forEach(n => inner.appendChild(n));
+        numEl.appendChild(inner);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          inner.style.transform = 'translateY(0)';
+        }));
+      }
+
+      // Count up with matching delay
+      const idx = allStatNums.indexOf(numEl);
+      const countDelay = idx * 90;
+      setTimeout(() => {
+        const dur = 1300, start = performance.now();
+        (function step(now) {
+          const p = Math.min((now - start) / dur, 1);
+          const ease = 1 - Math.pow(1 - p, 3);
+          el.textContent = isInt ? Math.floor(ease * t) : (ease * t).toFixed(2);
+          if (p < 1) requestAnimationFrame(step);
+          else el.textContent = isInt ? t : t.toFixed(2);
+        })(start);
+      }, countDelay);
+
+      ctrObs.unobserve(el);
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.ctr').forEach(el => ctrObs.observe(el));
+
+  // ── SCROLL-DRIVEN TIMELINE RAIL ──
+  const rail = document.getElementById('tl-rail');
+  const tlWrap = rail ? rail.parentElement : null;
+  function updateRail() {
+    if (!rail || !tlWrap) return;
+    const rect = tlWrap.getBoundingClientRect();
+    const vp = window.innerHeight;
+    const scrolled = vp * 0.75 - rect.top;
+    const progress = Math.max(0, Math.min(1, scrolled / rect.height));
+    rail.style.height = (progress * 100) + '%';
+  }
+  window.addEventListener('scroll', updateRail, { passive: true });
+  updateRail();
+
+  // ── STICKY TIMELINE HEADER ──
+  const tlHeads = document.querySelectorAll('.tl-head');
+  const stickyObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      e.target.classList.toggle('stuck', e.intersectionRatio < 1);
+    });
+  }, { threshold: 1, rootMargin: `-${64 + 6}px 0px 0px 0px` });
+  tlHeads.forEach(h => stickyObs.observe(h));
+
+  // ── MAGNETIC BUTTONS ──
+  document.querySelectorAll('.btn-primary, .btn-ghost, .nav-cta').forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
+      btn.style.transition = 'transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease';
+    });
+    btn.addEventListener('mousemove', e => {
+      const r = btn.getBoundingClientRect();
+      const x = (e.clientX - r.left - r.width  / 2) * 0.36;
+      const y = (e.clientY - r.top  - r.height / 2) * 0.42;
+      btn.style.transform = `translate(${x}px, ${y}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transition = 'transform 0.65s cubic-bezier(0.16,1,0.3,1), opacity 0.2s ease, box-shadow 0.2s ease';
+      btn.style.transform = '';
+    });
+  });
+
+  // ── DOTTED SURFACE (Three.js fixed wave background) ──
+  (function() {
+    if (typeof THREE === 'undefined') return;
+    const SEPARATION = 150, AMOUNTX = 40, AMOUNTY = 60;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
+    camera.position.set(0, 355, 1220);
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0);
+
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;';
+    renderer.domElement.style.cssText = 'pointer-events:none;display:block;';
+    wrap.appendChild(renderer.domElement);
+    (document.getElementById('hero') || document.body).appendChild(wrap);
+
+    const total = AMOUNTX * AMOUNTY;
+    const positions = new Float32Array(total * 3);
+    const colors    = new Float32Array(total * 3);
+    const lr = 1, lg = 1, lb = 1; // white dots
+
+    for (let ix = 0; ix < AMOUNTX; ix++) {
+      for (let iy = 0; iy < AMOUNTY; iy++) {
+        const i = ix * AMOUNTY + iy;
+        positions[i * 3]     = ix * SEPARATION - (AMOUNTX * SEPARATION) / 2;
+        positions[i * 3 + 1] = 0;
+        positions[i * 3 + 2] = iy * SEPARATION - (AMOUNTY * SEPARATION) / 2;
+        colors[i * 3] = lr; colors[i * 3 + 1] = lg; colors[i * 3 + 2] = lb;
+      }
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('color',    new THREE.Float32BufferAttribute(colors,    3));
+
+    const material = new THREE.PointsMaterial({
+      size: 7, vertexColors: true,
+      transparent: true, opacity: 0.35, sizeAttenuation: true,
+    });
+    scene.add(new THREE.Points(geometry, material));
+
+    const posAttr = geometry.attributes.position;
+    const posArr  = posAttr.array;
+    let count = 0;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      let i = 0;
+      for (let ix = 0; ix < AMOUNTX; ix++) {
+        for (let iy = 0; iy < AMOUNTY; iy++) {
+          posArr[i * 3 + 1] =
+            Math.sin((ix + count) * 0.3) * 50 +
+            Math.sin((iy + count) * 0.5) * 50;
+          i++;
+        }
+      }
+      posAttr.needsUpdate = true;
+      renderer.render(scene, camera);
+      count += 0.1;
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }, { passive: true });
+
+    animate();
+  })();
+
+  // ── 3D CARD TILT ──
+  document.querySelectorAll('.hcard,.tl-card,.skill-cat,.cert-card,.edu-card,.ach-card,.stat-item').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transition = 'transform 0.12s ease, border-color 0.25s ease';
+    });
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width  - 0.5) * 14;
+      const y = ((e.clientY - r.top)  / r.height - 0.5) * -10;
+      card.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${x}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transition = 'transform 0.65s cubic-bezier(0.16,1,0.3,1), border-color 0.25s ease';
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+    });
+  });
+</script>
+
+</body>
+</html>
