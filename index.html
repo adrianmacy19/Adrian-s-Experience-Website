@@ -764,8 +764,8 @@
       <div class="stat-lbl">Deloitte Silver Dot Award</div>
     </div>
     <div class="stat-item reveal" style="transition-delay:.28s">
-      <div class="stat-num">3.79</div>
-      <div class="stat-lbl">University GPA / 4.0</div>
+      <div class="stat-num"><span class="ctr" data-t="4">0</span></div>
+      <div class="stat-lbl">Tier-1 Financial Industry Clients</div>
     </div>
   </div>
 </div>
@@ -1488,75 +1488,81 @@
   // ── DOTTED SURFACE (Three.js fixed wave background) ──
   (function() {
     if (typeof THREE === 'undefined') return;
-    const SEPARATION = 150, AMOUNTX = 40, AMOUNTY = 60;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
-    camera.position.set(0, 355, 1220);
+    function createWave(flipped) {
+      const SEPARATION = 150, AMOUNTX = 40, AMOUNTY = 60;
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000, 0);
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
+      camera.position.set(0, 355, 1220);
 
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;';
-    renderer.domElement.style.cssText = 'pointer-events:none;display:block;';
-    wrap.appendChild(renderer.domElement);
-    (document.getElementById('hero') || document.body).appendChild(wrap);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0);
 
-    const total = AMOUNTX * AMOUNTY;
-    const positions = new Float32Array(total * 3);
-    const colors    = new Float32Array(total * 3);
-    const lr = 1, lg = 1, lb = 1; // white dots
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;'
+        + (flipped ? 'transform:scaleY(-1);' : '');
+      renderer.domElement.style.cssText = 'pointer-events:none;display:block;';
+      wrap.appendChild(renderer.domElement);
+      (document.getElementById('hero') || document.body).appendChild(wrap);
 
-    for (let ix = 0; ix < AMOUNTX; ix++) {
-      for (let iy = 0; iy < AMOUNTY; iy++) {
-        const i = ix * AMOUNTY + iy;
-        positions[i * 3]     = ix * SEPARATION - (AMOUNTX * SEPARATION) / 2;
-        positions[i * 3 + 1] = 0;
-        positions[i * 3 + 2] = iy * SEPARATION - (AMOUNTY * SEPARATION) / 2;
-        colors[i * 3] = lr; colors[i * 3 + 1] = lg; colors[i * 3 + 2] = lb;
-      }
-    }
+      const total = AMOUNTX * AMOUNTY;
+      const positions = new Float32Array(total * 3);
+      const colors    = new Float32Array(total * 3);
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geometry.setAttribute('color',    new THREE.Float32BufferAttribute(colors,    3));
-
-    const material = new THREE.PointsMaterial({
-      size: 7, vertexColors: true,
-      transparent: true, opacity: 0.35, sizeAttenuation: true,
-    });
-    scene.add(new THREE.Points(geometry, material));
-
-    const posAttr = geometry.attributes.position;
-    const posArr  = posAttr.array;
-    let count = 0;
-
-    function animate() {
-      requestAnimationFrame(animate);
-      let i = 0;
       for (let ix = 0; ix < AMOUNTX; ix++) {
         for (let iy = 0; iy < AMOUNTY; iy++) {
-          posArr[i * 3 + 1] =
-            Math.sin((ix + count) * 0.3) * 50 +
-            Math.sin((iy + count) * 0.5) * 50;
-          i++;
+          const i = ix * AMOUNTY + iy;
+          positions[i * 3]     = ix * SEPARATION - (AMOUNTX * SEPARATION) / 2;
+          positions[i * 3 + 1] = 0;
+          positions[i * 3 + 2] = iy * SEPARATION - (AMOUNTY * SEPARATION) / 2;
+          colors[i * 3] = colors[i * 3 + 1] = colors[i * 3 + 2] = 1;
         }
       }
-      posAttr.needsUpdate = true;
-      renderer.render(scene, camera);
-      count += 0.1;
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setAttribute('color',    new THREE.Float32BufferAttribute(colors,    3));
+
+      const material = new THREE.PointsMaterial({
+        size: 7, vertexColors: true,
+        transparent: true, opacity: 0.35, sizeAttenuation: true,
+      });
+      scene.add(new THREE.Points(geometry, material));
+
+      const posAttr = geometry.attributes.position;
+      const posArr  = posAttr.array;
+      let count = 0;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        let i = 0;
+        for (let ix = 0; ix < AMOUNTX; ix++) {
+          for (let iy = 0; iy < AMOUNTY; iy++) {
+            posArr[i * 3 + 1] =
+              Math.sin((ix + count) * 0.3) * 50 +
+              Math.sin((iy + count) * 0.5) * 50;
+            i++;
+          }
+        }
+        posAttr.needsUpdate = true;
+        renderer.render(scene, camera);
+        count += 0.1;
+      }
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }, { passive: true });
+
+      animate();
     }
 
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    }, { passive: true });
-
-    animate();
+    createWave(false); // normal — wave rises from bottom
+    createWave(true);  // flipped — mirror wave falls from top
   })();
 
   // ── 3D CARD TILT ──
