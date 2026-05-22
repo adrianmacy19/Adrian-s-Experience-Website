@@ -326,6 +326,18 @@
     .about-grid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start;
     }
+    .about-photo {
+      width: 210px; height: 210px; border-radius: 50%;
+      overflow: hidden; margin-bottom: 2.2rem;
+      border: 2px solid var(--lemon-border);
+      box-shadow: 0 0 0 5px var(--bg), 0 0 0 7px var(--lemon-border), 0 16px 48px rgba(0,0,0,.55);
+      flex-shrink: 0;
+    }
+    .about-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center 30%;
+      display: block;
+    }
     .about-body p {
       color: var(--sage-3); line-height: 1.8; font-size: .94rem;
       margin-bottom: 1.2rem; font-weight: 300;
@@ -781,6 +793,9 @@
     <h2 class="s-title">Strategy. Product. Finance.<br><em>All in one.</em></h2>
     <div class="about-grid">
       <div class="about-body reveal">
+        <div class="about-photo">
+          <img src="IMG_8350.jpeg" alt="Adrian Ma">
+        </div>
         <p>
           I'm a <strong>Senior Consultant at Capco</strong> with a rare blend of CPA-level financial
           rigor, Big 4 audit depth, and hands-on Agile product delivery. I've led transformative
